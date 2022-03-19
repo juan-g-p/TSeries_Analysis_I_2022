@@ -1,0 +1,166 @@
+---
+title: "10_Midterm_Review"
+author: "Juan Garbayo de Pablo"
+output:
+  bookdown::html_document2:
+    number_sections: no
+    toc: true
+    toc_depth: 6
+    toc_float: false
+    toc_collapsed: false
+    self_contained: true
+    lib_dir: libs
+---
+
+
+
+
+```{r, error=FALSE, warning=FALSE, message = FALSE}
+library(fpp3)
+library(tsdl)
+library(fma)
+```
+# IMPORTANT: associated video lesson
+
+I uploaded the class of the 18th of March to blackboard for you to be able to go through it and perform these exercises.
+
+# 1. CSV Import and conversion to a tsibble
+
+1. Use `read_csv()` to import the dataset "AirPassengers.csv" to a tsibble
+
+2. Convert the resulting tibble to a tsibble using `as_tsibble()`. Remember that you need to parse the Month column to a date object (in this case `yearmonth()` is the best option.).
+
+# 2. Graphical Analysis:
+
+## 2.1 Correlogram interpretation:
+
+* Seasonal period
+* Trend component vs. Seasonal Component vs. Random component
+* Interpretation
+
+## 2.2 Exercise: generate and interpret correlograms:
+
+Generate and interpret the correlogram of the following time series:
+
+```{r}
+Bricks <- select(aus_production, Bricks)
+head(Bricks)
+```
+
+```{r}
+Hare_tr <- pelt %>%
+  select(Year, Hare)
+
+head(Hare_tr)
+```
+
+```{r}
+head(us_gasoline)
+```
+
+## 2.3 Generate timeplots for the previous graphs **adjusting the grid to indicate relevant data points**
+
+Examples of this can be found in the **solution to session 4** (asynchronous session). Specifically **adjust the time grid to signal relevant points (months, years...)**
+
+```{r}
+
+```
+
+
+## 2.4 Generate and interpret a seasonal subseries and a seasonal plot for the following series:
+
+```{r}
+retail_series <- aus_retail %>%
+  filter(`Series ID` == "A3349767W")
+
+head(retail_series)
+```
+
+```{r}
+Bricks <- select(aus_production, Bricks)
+head(Bricks)
+```
+
+```{r}
+h02 <- PBS %>%
+  
+  filter(ATC2 == "H02") %>%
+  group_by(ATC2, ATC2_desc) %>%
+  summarise(Cost = sum(Cost))
+
+head(h02)
+```
+
+# Aggregating using `index_by()`
+
+Aggregate this series using index_by to obtain the average, maximum and minimum Barrel price value:
+
+1. Per month
+2. Per quarter
+
+```{r}
+head(us_gasoline)
+```
+
+# t Series Decomposition
+
+## STL and X-11 decomposition:
+
+* When shouold we use STL and when should we use X-11 / SEATS decompositions?
+  + Advantages/Disadvantages of it.
+  
+* Which are the most important paramenters in an STL decomposition?
+  + Explain the effect of each paramenter
+  
+* Which are the most important paramenters in an STL decomposition? What are their effects?
+
+* Do you see any problems with this decomposition? If so, how would you fix them?
+
+```{r}
+labour_tsibble <-as_tsibble(labour)
+stl_dcmp_1 <- labour_tsibble %>%
+  model(stl = STL(value)) %>%
+  components()
+
+stl_dcmp_1 %>% autoplot()
+```
+
+* Do you see any problem with this decomposition? If so, how would you fix them? 
+
+```{r}
+us_retail_employment <- us_employment %>%
+  filter(year(Month) >= 1990, Title == "Retail Trade") %>%
+  select(-Series_ID)
+
+us_retail_employment %>%
+  model(stl = STL(Employed)) %>%
+  components() %>% 
+  autoplot()
+```
+
+## Manually compute an additive decomposition for this time series:
+
+```{r}
+us_retail_employment <- us_employment %>%
+  filter(year(Month) >= 1990, Title == "Retail Trade") %>%
+  select(-Series_ID)
+```
+
+* 1. Compute the 2x12 Moving Average of the Series to estimate the trend
+* 2. Compute the detrended component substrancting the trend approximation
+* 3. Compute the seasonal component
+  * 3.1 Using `index_by()` and `mean()`, compute the mean value of the series for each of the months of the year.
+    + Example: the mean value for all Januaries, for all Februaries, all Marchs...
+  * 3.2 Check if that value adds up to 0. If it does not
+    + 3.2.1: divide the sum by the seasonal period (in this case 12)
+    + 3.2.2: distribute the result as a correction uniformly on the different components of the seasonal series
+    + 3.2.3: Check again to verify that the new seasonal component adds up to 0
+* 4. Bring the seasonal component back on the original dataset using `left_join()` from (`dplyr` library, loaded along `fpp3`).
+
+## left_join() between tables
+
+# additional points:
+
+* group_by() and ungroup()
+* formulas for moving averages
+
