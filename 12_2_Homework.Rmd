@@ -1,0 +1,45 @@
+---
+title: "12_2_Homework"
+author: "Juan Garbayo"
+date: "3/3/2022"
+output:
+  bookdown::html_document2:
+    number_sections: no
+    toc: true
+    toc_depth: 6
+    toc_float: false
+    toc_collapsed: false
+    self_contained: true
+    lib_dir: libs
+params:
+  print_sol: FALSE 
+---
+
+```{r, warning= FALSE, message=FALSE}
+library(fpp3)
+```
+
+# Exercise 1
+
+For this exercise we are going to use the `aus_retail` dataset. You should already be familiar with this dataset, since we used it in the asynchronous session 4. Nonetheless remember you can always use `?aus_retail` in the console to red the details abut the dataset.
+
+The contains a variety of series that that might be filtered using their specific series ID. We will be working the the following Series ID: A3349767W. The following code filters the series for you.
+
+```{r}
+retail_series <- aus_retail %>%
+  filter(`Series ID` == "A3349767W")
+
+head(retail_series)
+```
+
+## 1. Use **an STL decompostition** to calculate the trend-cycle and seasonal indices. If you deem it necessary, adjust the averaging windows.
+
+**NOTE:** remember that the STL decomposition is only applicable to additive schemes, which means you need to transform the data first to obtain an additive scheme. 
+
+## 2. Extract and plot the seasonally adjusted data from the decomposition.
+
+## 3. Use the drift method to produce forecasts of the seasonally adjusted data.
+
+## 4. Use `decomposition_model()` to reseasonalize the results. To compute the seasonal component, use the default seasonal naive proceduree.
+
+## 5. Perform an analysis of the residuals.
